@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+pydantic[email]
+PyPDF2
+python-docx
+groq
+python-dotenv
