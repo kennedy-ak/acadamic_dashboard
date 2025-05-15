@@ -8,7 +8,7 @@ def get_groq_client():
     Create and return a Groq client instance
     """
     try:
-        api_key = "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"
+        api_key = ""
         if not api_key:
             raise HTTPException(status_code=500, detail="GROQ_API_KEY not found in environment variables.")
         
