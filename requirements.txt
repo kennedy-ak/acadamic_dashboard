@@ -5,5 +5,7 @@ pydantic
 pydantic[email]
 PyPDF2
 python-docx
-groq
+langchain
+langchain-groq
 python-dotenv
+pydantic-settings

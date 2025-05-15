@@ -3,7 +3,7 @@ import docx
 import io
 from fastapi import HTTPException
 
-def extract_text_from_pdf(file_content):
+def extract_text_from_pdf(file_content: bytes) -> str:
     """
     Extract text from PDF file content
     """
@@ -16,7 +16,7 @@ def extract_text_from_pdf(file_content):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error extracting text from PDF: {str(e)}")
 
-def extract_text_from_docx(file_content):
+def extract_text_from_docx(file_content: bytes) -> str:
     """
     Extract text from DOCX file content
     """
