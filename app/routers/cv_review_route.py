@@ -1,6 +1,6 @@
 from fastapi import File, Form, UploadFile, HTTPException, Depends, APIRouter
-from app.schema.schema import CVReview, CVReviewResponse, CVReviewRequest
-from app.services.cv_extractor import extract_text_from_pdf, extract_text_from_docx
+from app.schema.schema import CVReview, CVReviewResponse
+from app.services.cv_extractor import extract_text
 from app.services.llm_service import review_cv
 from typing import Optional
 import json
@@ -33,11 +33,13 @@ async def review_cv_file(
     # Extract text based on file type
     cv_text = None  # Initialize cv_text to None
     if file_extension == "pdf":
-        cv_text = extract_text_from_pdf(file_content)
+        cv_text = extract_text(file_content, file.filename)
         logging.info("📄 Extracted text from PDF.")
+
     elif file_extension == "docx":
-        cv_text = extract_text_from_docx(file_content)
+        cv_text = extract_text(file_content, file.filename)
         logging.info("📝 Extracted text from DOCX.")
+    logging.info(f"✏️ Text Extracted: {cv_text}")
 
     # Check if text extraction was successful
     if not cv_text:

@@ -1,10 +1,10 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 
-class CVReviewRequest(BaseModel):
-    """Request model for CV review when submitting text directly"""
-    cv_text: str
-    email: EmailStr
+# class CVReviewRequest(BaseModel):
+#     """Request model for CV review when submitting text directly"""
+#     cv_text: str
+#     email: EmailStr
 
 class ScoredCategory(BaseModel):
     score: int = Field(description="Score for the category (out of 100)")
