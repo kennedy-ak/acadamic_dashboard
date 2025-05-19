@@ -1,8 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Academic-Proj-CV-AI: Documentation Guide
 
-## Getting Started
+## Project Summary
 
-First, run the development server:
+This project is a Next.js application designed to review CVs (Curriculum Vitae) by extracting text from uploaded files (PDF or DOCX), and then leveraging Large Language Models (LLMs) to provide detailed feedback and scoring. It offers insights into the CV's structure, content quality, skills presentation, and experience highlights, along with improvement suggestions.
+
+## Setup and Installation
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+-   Node.js (version 18 or later)
+-   npm, yarn, pnpm, or bun (package managers)
+
+### Dependencies to install
+- @langchain/core
+- @langchain/groq
+- @types/formidable
+- dotenv
+- formidable
+- langchain
+- llamaindex
+Eg.
+```bash
+npm install @langchain/core @langchain/groq @types/formidable dotenv formidable langchain llamaindex
+```
+
+### Steps
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone <repository_url>
+    cd academic-proj-cv-ai
+    ```
+
+2.  **Install dependencies:**
+
+    Using npm:
+
+    ```bash
+    npm install
+    ```
+
+    or using yarn:
+
+    ```bash
+    yarn install
+    ```
+
+    or using pnpm:
+
+    ```bash
+    pnpm install
+    ```
+
+    or using bun:
+
+    ```bash
+    bun install
+    ```
+
+3.  **Environment Variables:**
+
+    Create a `.env` file in the project's root directory. Add your API keys:
+
+    ```
+    GROQ_API_KEY=<your_groq_api_key>
+    LLAMA_CLOUD_API_KEY=<your_llama_cloud_api_key>
+    ```
+
+    **Note:** Ensure you obtain valid API keys from Groq and LlamaCloud and store them securely. Do not commit the `.env` file to your repository.
+
+## Running the Application
+
+To start the development server, use one of the following commands:
 
 ```bash
 npm run dev
@@ -12,25 +84,70 @@ yarn dev
 pnpm dev
 # or
 bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and navigate to `http://localhost:3000` to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage Guide
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Upload a CV:**
 
-## Learn More
+    *   On the homepage, find the file upload component.
+    *   Click on the input field to select a CV file (PDF or DOCX) from your local machine.
 
-To learn more about Next.js, take a look at the following resources:
+2.  **Review the Analysis:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    *   After uploading, the application processes the file.
+    *   The text is extracted and sent to the LLM for review.
+    *   The analysis result, including scores, reasoning, and improvement suggestions, will be displayed.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Core Features Overview
 
-## Deploy on Vercel
+The project's core logic is distributed across several key files:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**`src/app/page.tsx`**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   This is the main component for the homepage.
+*   It includes a `FileUpload` component that handles file uploads and calls the review API.
+*   It manages the state for the review data and displays the results.
+
+**`src/pages/api/review/file.ts`**
+
+*   This is the API endpoint that handles the file upload and CV review process.
+*   It uses `formidable` to parse the uploaded file.
+*   It calls `extractText` from `cv_extractor.ts` to extract text from the file.
+*   It calls `reviewCV` from `llm_service.ts` to review the extracted text using an LLM.
+*   It returns the review results as a JSON response.
+
+**`src/services/cv_extractor.ts`**
+
+*   This module is responsible for extracting text content from the uploaded CV file.
+*   It uses the `LlamaParseReader` from the `llamaindex` library.
+*   It takes the file content (as a Buffer) and the filename as input.
+*   It returns the extracted text as a string.
+
+**`src/services/llm_service.ts`**
+
+*   This module interfaces with the LLM to review the extracted CV text.
+*   It uses `ChatGroq` from the `@langchain/groq` library to communicate with the Groq API.
+*   It constructs a detailed prompt that instructs the LLM to analyze the CV based on several criteria such as overall structure, content quality, skills presentation, and experience highlights.
+*   The prompt asks the LLM to provide scores and reasoning for each category, along with specific improvement suggestions.
+*   It parses the LLM's response using `JsonOutputParser` to ensure it conforms to a predefined JSON schema (`CVReview`).
+*   It returns the review results as a `CVReview` object.
+
+**`src/core/settings.ts`**
+
+*   This module manages the application's settings and configuration.
+*   It loads environment variables from the `.env` file using the `dotenv` package.
+*   It defines the `settings` object, which contains configuration parameters such as API keys, the LLM model to use, temperature, and maximum tokens.
+
+**`src/core/types.ts`**
+
+*   This module defines the TypeScript types and interfaces used throughout the application.
+*   It defines the `CVReview` interface, which represents the structure of the CV review data, including scores, reasoning, and improvement suggestions.
+*   It defines the `ScoredCategory` interface, which represents a scored category with a score and reasoning.
+
+**`src/schema/schema.ts`**
+
+*   This module defines the schema for the CV review response.
+*   It imports the `CVReview` type from `src/core/types.ts`.
+*   It defines the `CVReviewResponse` interface, which represents the structure of the API response.
