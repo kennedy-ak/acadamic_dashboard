@@ -1,9 +1,50 @@
+
+
 "use client";
 import React, { useState } from "react";
-import { CVReviewResponse } from "@/schema/schema";
+
+interface CVExtraction {
+  first_name: string;
+  last_name: string;
+  research_fields: string[];
+  about: string;
+  experience: Experience[];
+  academic_background: AcademicBackground[];
+  publications: Publication[];
+  awards: Award[];
+}
+
+interface Experience {
+  institution: string;
+  role: string;
+  start_date: string;
+  end_date: string;
+}
+
+interface AcademicBackground {
+  institution: string;
+  program: string;
+  academic_degree: string;
+  start_date: string;
+  end_date: string;
+}
+
+interface Publication {
+  project_name: string;
+  link: string;
+}
+
+interface Award {
+  award_name: string;
+  year: string;
+}
+
+interface CVExtractionResponse {
+  extraction: CVExtraction;
+}
 
 interface FileUploadProps {
-  onUpload: (review: CVReviewResponse) => void;
+  onUpload: (extraction: CVExtractionResponse) => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
@@ -14,7 +55,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
-      setError(null); // Clear any previous error when a new file is selected
+      setError(null);
     }
   };
 
@@ -41,8 +82,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
         throw new Error(errorData.error || "Failed to upload file.");
       }
 
-      const data: CVReviewResponse = await response.json();
-      onUpload(data); // Pass the review data to the parent component
+      const data: CVExtractionResponse = await response.json();
+      onUpload(data);
     } catch (error: any) {
       setError(error.message || "An unexpected error occurred.");
     } finally {
@@ -52,9 +93,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
 
   return (
     <div>
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" onChange={handleFileChange} accept=".pdf,.docx" />
       <button onClick={handleUpload} disabled={uploading}>
-        {uploading ? "Uploading..." : "Upload and Review"}
+        {uploading ? "Extracting..." : "Upload and Extract"}
       </button>
       {error && <p style={{ color: "red" }}>Error: {error}</p>}
     </div>
@@ -62,20 +103,20 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
 };
 
 export default function Home() {
-  const [reviewData, setReviewData] = useState<CVReviewResponse | null>(null);
+  const [extractionData, setExtractionData] = useState<CVExtractionResponse | null>(null);
 
-  const handleReviewUpload = (review: CVReviewResponse) => {
-    setReviewData(review);
+  const handleExtractionUpload = (extraction: CVExtractionResponse) => {
+    setExtractionData(extraction);
   };
 
   return (
     <main style={{ padding: "2rem" }}>
-      <h1>CV Reviewer</h1>
-      <FileUpload onUpload={handleReviewUpload} />
-      {reviewData && (
+      <h1>CV Information Extractor</h1>
+      <FileUpload onUpload={handleExtractionUpload} />
+      {extractionData && (
         <div>
-          <h2>CV Review Result</h2>
-          <pre>{JSON.stringify(reviewData.review, null, 2)}</pre>
+          <h2>Extracted Information (JSON)</h2>
+          <pre>{JSON.stringify(extractionData.extraction, null, 2)}</pre>
         </div>
       )}
     </main>
