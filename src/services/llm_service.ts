@@ -22,6 +22,7 @@ export interface Experience {
   role: string;
   start_date: string;
   end_date: string;
+  description: string;
 }
 
 export interface AcademicBackground {
@@ -86,7 +87,8 @@ export async function extractCVInfo(cvText: string): Promise<CVExtraction> {
               institution: "",
               role: "",
               start_date: "",
-              end_date: ""
+              end_date: "",
+              description: ""
             }
           ],
           academic_background: [
