@@ -1,5 +1,3 @@
-
-
 import { ChatGroq } from "@langchain/groq";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { settings } from "../core/settings";
@@ -22,7 +20,7 @@ export interface Experience {
   role: string;
   start_date: string;
   end_date: string;
-  description: string;
+  description: string; // Added description field for experience details
 }
 
 export interface AcademicBackground {
@@ -34,8 +32,14 @@ export interface AcademicBackground {
 }
 
 export interface Publication {
-  project_name: string;
+  title: string;
+  authors: string[];
+  venue: string;
+  abstract: string;
+  doi: string;
   link: string;
+  type: string;
+  year: string;
 }
 
 export interface Award {
@@ -60,9 +64,9 @@ export async function extractCVInfo(cvText: string): Promise<CVExtraction> {
         1. First name and last name of the person
         2. Research fields/areas of expertise/skills (as an array of strings)
         3. About section/summary/objective/personal statement (brief description of the person)
-        4. Work experience with institution/company name, role/position, start date, and end date
+        4. Work experience with institution/company name, role/position, start date, end date, and description of responsibilities/achievements
         5. Academic background with institution name, program/field of study, academic degree, start date, and end date
-        6. Publications with project/paper name and link (if available)
+        6. Publications with title, authors (as array), venue/journal/conference, abstract/summary, DOI, link, publication type, and year
         7. Awards with award name and year received
 
         IMPORTANT INSTRUCTIONS:
@@ -72,9 +76,14 @@ export async function extractCVInfo(cvText: string): Promise<CVExtraction> {
         - Extract ALL entries found in each section (experience, education, publications, awards).
         - Research fields can include technical skills, areas of study, specializations, or expertise areas.
         - For academic background, include all educational qualifications (Bachelor's, Master's, PhD, certificates, etc.).
-        - For publications, extract paper titles, book titles, project names, research publications, etc.
+        - For publications, extract paper titles, journal articles, conference papers, book chapters, reports, etc. with complete bibliographic information.
+        - Publication authors should be extracted as an array of individual author names.
+        - Publication venue includes journal names, conference names, book titles, or publishing platforms.
+        - Publication type can be: "Journal Article", "Conference Paper", "Book Chapter", "Report", "Thesis", "Preprint", "Patent", etc.
+        - For publications, if any field is not available, use empty string for strings or empty array for authors array.
         - For awards, include scholarships, honors, recognitions, certifications, etc.
-        - If no link is provided for publications, use empty string for the link field.
+        - For experience description, extract key responsibilities, achievements, accomplishments, and notable projects from each role. Include bullet points, metrics, and specific outcomes when available.
+        - If no description is provided for a role, use empty string for the description field.
 
         Your response must be valid JSON conforming exactly to this schema:
         ${JSON.stringify({
@@ -102,8 +111,14 @@ export async function extractCVInfo(cvText: string): Promise<CVExtraction> {
           ],
           publications: [
             {
-              project_name: "",
-              link: ""
+              title: "",
+              authors: [""],
+              venue: "",
+              abstract: "",
+              doi: "",
+              link: "",
+              type: "",
+              year: ""
             }
           ],
           awards: [
