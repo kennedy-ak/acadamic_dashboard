@@ -20,7 +20,7 @@ export interface Experience {
   role: string;
   start_date: string;
   end_date: string;
-  description: string; // Added description field for experience details
+  description: string;
 }
 
 export interface AcademicBackground {
@@ -50,102 +50,168 @@ export interface Award {
 const llm = new ChatGroq({
   model: settings.groq_model,
   apiKey: settings.GROQ_API_KEY,
-  temperature: 0.1, // Lower temperature for more precise extraction
+  temperature: 0.1,
   maxTokens: settings.max_tokens,
 });
+
+// Enhanced JSON cleaning function
+function cleanJsonString(jsonString: string): string {
+  // Remove markdown code blocks
+  jsonString = jsonString.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+  
+  // Find JSON boundaries
+  const jsonStart = jsonString.indexOf('{');
+  const jsonEnd = jsonString.lastIndexOf('}');
+  
+  if (jsonStart !== -1 && jsonEnd !== -1) {
+    jsonString = jsonString.substring(jsonStart, jsonEnd + 1);
+  }
+  
+  return jsonString.trim();
+}
+
+// Function to attempt JSON repair
+function repairJson(jsonString: string): string {
+  try {
+    // First attempt: try to parse as-is
+    JSON.parse(jsonString);
+    return jsonString;
+  } catch (error) {
+    console.log("Initial JSON parse failed, attempting repairs...");
+    
+    // Common repairs
+    let repaired = jsonString;
+    
+    // Fix common escaping issues
+    repaired = repaired.replace(/([^\\])"/g, '$1\\"'); // Escape unescaped quotes
+    repaired = repaired.replace(/^"/, '\\"'); // Fix quotes at start
+    repaired = repaired.replace(/\n/g, '\\n'); // Escape newlines
+    repaired = repaired.replace(/\r/g, '\\r'); // Escape carriage returns
+    repaired = repaired.replace(/\t/g, '\\t'); // Escape tabs
+    
+    // Fix trailing commas
+    repaired = repaired.replace(/,(\s*[}\]])/g, '$1');
+    
+    // Fix missing commas between array elements
+    repaired = repaired.replace(/}(\s*){/g, '},$1{');
+    repaired = repaired.replace(/](\s*)\[/g, '],$1[');
+    
+    try {
+      JSON.parse(repaired);
+      return repaired;
+    } catch (secondError) {
+      console.log("JSON repair failed, will try fallback approach");
+      throw secondError;
+    }
+  }
+}
+
+
 
 // Enhanced CV Information Extraction Function
 export async function extractCVInfo(cvText: string): Promise<CVExtraction> {
   try {
     const systemMessage = `
-        You are a professional CV information extractor. 
-        Extract the following information from the CV text and return it in JSON format:
+You are a professional CV information extractor. Extract information and return ONLY valid JSON.
 
-        1. First name and last name of the person
-        2. Research fields/areas of expertise/skills (as an array of strings)
-        3. About section/summary/objective/personal statement (brief description of the person)
-        4. Work experience with institution/company name, role/position, start date, end date, and description of responsibilities/achievements
-        5. Academic background with institution name, program/field of study, academic degree, start date, and end date
-        6. Publications with title, authors (as array), venue/journal/conference, abstract/summary, DOI, link, publication type, and year
-        7. Awards with award name and year received
+CRITICAL JSON RULES:
+1. Escape ALL quotes in strings: use \\" for quotes within strings
+2. Replace all newlines with \\n
+3. NO unescaped quotes, newlines, or special characters
+4. Use simple, clean descriptions without complex formatting
+5. Return ONLY the JSON object, no additional text
 
-        IMPORTANT INSTRUCTIONS:
-        - For dates, use format: "MM/YYYY" or "Month YYYY". If only year is provided, use "YYYY".
-        - If end date is current/present/ongoing, use "Present".
-        - If information is not available or cannot be determined, use empty string for strings or empty array for arrays.
-        - Extract ALL entries found in each section (experience, education, publications, awards).
-        - Research fields can include technical skills, areas of study, specializations, or expertise areas.
-        - For academic background, include all educational qualifications (Bachelor's, Master's, PhD, certificates, etc.).
-        - For publications, extract paper titles, journal articles, conference papers, book chapters, reports, etc. with complete bibliographic information.
-        - Publication authors should be extracted as an array of individual author names.
-        - Publication venue includes journal names, conference names, book titles, or publishing platforms.
-        - Publication type can be: "Journal Article", "Conference Paper", "Book Chapter", "Report", "Thesis", "Preprint", "Patent", etc.
-        - For publications, if any field is not available, use empty string for strings or empty array for authors array.
-        - For awards, include scholarships, honors, recognitions, certifications, etc.
-        - For experience description, extract key responsibilities, achievements, accomplishments, and notable projects from each role. Include bullet points, metrics, and specific outcomes when available.
-        - If no description is provided for a role, use empty string for the description field.
+Schema to follow:
+{
+  "first_name": "string",
+  "last_name": "string", 
+  "research_fields": ["string"],
+  "about": "string",
+  "experience": [
+    {
+      "institution": "string",
+      "role": "string", 
+      "start_date": "string",
+      "end_date": "string",
+      "description": "string"
+    }
+  ],
+  "academic_background": [
+    {
+      "institution": "string",
+      "program": "string",
+      "academic_degree": "string", 
+      "start_date": "string",
+      "end_date": "string"
+    }
+  ],
+  "publications": [
+    {
+      "title": "string",
+      "authors": ["string"],
+      "venue": "string",
+      "abstract": "string",
+      "doi": "string", 
+      "link": "string",
+      "type": "string",
+      "year": "string"
+    }
+  ],
+  "awards": [
+    {
+      "award_name": "string",
+      "year": "string"
+    }
+  ]
+}
 
-        Your response must be valid JSON conforming exactly to this schema:
-        ${JSON.stringify({
-          first_name: "",
-          last_name: "",
-          research_fields: [""],
-          about: "",
-          experience: [
-            {
-              institution: "",
-              role: "",
-              start_date: "",
-              end_date: "",
-              description: ""
-            }
-          ],
-          academic_background: [
-            {
-              institution: "",
-              program: "",
-              academic_degree: "",
-              start_date: "",
-              end_date: ""
-            }
-          ],
-          publications: [
-            {
-              title: "",
-              authors: [""],
-              venue: "",
-              abstract: "",
-              doi: "",
-              link: "",
-              type: "",
-              year: ""
-            }
-          ],
-          awards: [
-            {
-              award_name: "",
-              year: ""
-            }
-          ]
-        } as CVExtraction)}
-    `;
-
-    const parser = new JsonOutputParser<CVExtraction>();
+Instructions:
+- Extract first and last names
+- Research fields: technical skills, expertise areas, specializations
+- About: summary/objective section
+- Experience: all work positions with clean descriptions
+- Academic background: all degrees and education
+- Publications: papers, articles, conferences with full details
+- Awards: honors, scholarships, recognitions
+- Use "Present" for current positions
+- Use empty string "" for missing values
+- Use empty array [] for missing arrays
+- Keep descriptions simple and clean
+- Date format: "MM/YYYY" or "YYYY"
+`;
 
     const prompt = new PromptTemplate({
       inputVariables: ["cv_text", "system_message"],
-      template:
-        "{system_message}\n\nCV Content to extract from:\n{cv_text}\n\nExtracted Information:",
+      template: "{system_message}\n\nCV Content:\n{cv_text}\n\nJSON Response:",
     });
 
-    const chain = prompt.pipe(llm).pipe(parser);
+    const chain = prompt.pipe(llm);
 
-    const result = await chain.invoke({
+    const response = await chain.invoke({
       cv_text: cvText,
       system_message: systemMessage,
     });
 
+    let jsonString = '';
+    if (typeof response === 'string') {
+      jsonString = response;
+    } else if (response && typeof response === 'object' && 'content' in response) {
+      jsonString = response.content;
+    } else {
+      throw new Error('Unexpected response format from LLM');
+    }
+
+    const cleanedJson = cleanJsonString(jsonString);
+    const repairedJson = repairJson(cleanedJson);
+    const result = JSON.parse(repairedJson);
+    
+    // Validate the result has the expected structure
+    if (!result.first_name && !result.last_name) {
+      throw new Error('Invalid extraction result - no name found');
+    }
+    
     return result;
+
   } catch (error: any) {
     console.error("Error during CV information extraction:", error);
     throw new Error(`Error during CV extraction: ${error.message}`);
