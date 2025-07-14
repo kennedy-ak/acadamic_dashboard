@@ -134,6 +134,7 @@ import formidable from "formidable";
 import * as fs from "fs";
 import { extractText } from "@/services/cv_extractor";
 import { extractCVInfo, CVExtraction } from "@/services/llm_service";
+import { validateSettings } from "@/core/settings";
 
 export const config = {
   api: {
@@ -154,10 +155,12 @@ export default async function handler(
   }
 
   console.log("=== CV Extraction API Debug ===");
-  console.log("GROQ_API_KEY exists:", !!process.env.GROQ_API_KEY);
+  console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
   console.log("===============================");
 
   try {
+    // Validate environment variables
+    validateSettings();
     const form = formidable({});
     const [fields, files] = await form.parse(req);
     const file = files.file;

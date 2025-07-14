@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lydia Baah Sekyere - Resume</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .resume-container {
+            max-width: 8.5in;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            color: #3498db;
+        }
+        
+        .profile-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #555;
+            text-align: justify;
+        }
+        
+        .objective-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #555;
+            text-align: justify;
+        }
+        
+        .competencies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .competency-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .competency-bullet {
+            width: 8px;
+            height: 8px;
+            background: #3498db;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .work-experience {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .job-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .company-period {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .job-duties {
+            list-style: none;
+        }
+        
+        .job-duties li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .job-duties li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .education-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .education-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .degree {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+        
+        .institution {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+        
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .language-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .language-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .language-level {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .hobbies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .hobby-item {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid #e9ecef;
+            color: #555;
+        }
+        
+        .reference-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .reference-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .reference-contact {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .download-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .resume-container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: none;
+                width: 100%;
+            }
+            
+            .download-btn {
+                display: none;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .name {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 25px;
+            }
+            
+            .competencies-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="download-btn" onclick="window.print()">📄 Download PDF</button>
+    
+    <div class="resume-container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="name">AGYEMAN LYDIA BAAH SEKYERE</h1>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <span>0500219441</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <span>Lydiabaahsekeyere@icloud.co</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <span>Accra, Madina</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">🌟</span>
+                    PERSONAL PROFILE
+                </h2>
+                <p class="profile-text">
+                    A friendly and enthusiastic individual with strong endurance and a positive attitude. Quick to learn new tasks and proficient at overcoming challenges without compromising integrity. Driven by excellence and committed to continuous personal and professional growth.
+                </p>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎯</span>
+                    CAREER OBJECTIVE
+                </h2>
+                <p class="objective-text">
+                    Seeking a role in administration, customer service, or digital marketing where I can apply my communication skills, creativity, and digital experience to contribute meaningfully to organizational growth.
+                </p>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">✅</span>
+                    CORE COMPETENCIES
+                </h2>
+                <div class="competencies-grid">
+                    <div class="competency-item">
+                        <div class="competency-bullet"></div>
+                        <span>Strong interpersonal and organizational skills</span>
+                    </div>
+                    <div class="competency-item">
+                        <div class="competency-bullet"></div>
+                        <span>Excellent communication abilities</span>
+                    </div>
+                    <div class="competency-item">
+                        <div class="competency-bullet"></div>
+                        <span>Social media & digital marketing</span>
+                    </div>
+                    <div class="competency-item">
+                        <div class="competency-bullet"></div>
+                        <span>Multitasking and time management</span>
+                    </div>
+                    <div class="competency-item">
+                        <div class="competency-bullet"></div>
+                        <span>Adaptability and creativity</span>
+                    </div>
+                    <div class="competency-item">
+                        <div class="competency-bullet"></div>
+                        <span>Proficient in Microsoft Office Suite</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">💼</span>
+                    WORK EXPERIENCE
+                </h2>
+                <div class="work-experience">
+                    <h3 class="job-title">Freelance Social Media & Digital Marketing Assistant</h3>
+                    <p class="company-period">Self-employed – 2024 to Present</p>
+                    <ul class="job-duties">
+                        <li>Managed and promoted small business content on Facebook, Instagram, and WhatsApp</li>
+                        <li>Assisted with branding, basic content creation, and customer engagement</li>
+                        <li>Improved reach and engagement for multiple small-scale clients</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎓</span>
+                    EDUCATION
+                </h2>
+                <div class="education-item">
+                    <div class="degree">Bachelor of Arts in Political Science</div>
+                    <div class="institution">University of Ghana – Level 100 (2025 – Present)</div>
+                </div>
+                <div class="education-item">
+                    <div class="degree">West African Senior School Certificate Examination (WASSCE)</div>
+                    <div class="institution">Ofori Panin Senior High School</div>
+                </div>
+                <div class="education-item">
+                    <div class="degree">Basic Education Certificate Examination (BECE)</div>
+                    <div class="institution">Liverose International School</div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">🗣</span>
+                    LANGUAGES
+                </h2>
+                <div class="languages-grid">
+                    <div class="language-item">
+                        <div class="language-name">English</div>
+                        <div class="language-level">Fluent</div>
+                    </div>
+                    <div class="language-item">
+                        <div class="language-name">Twi</div>
+                        <div class="language-level">Fluent</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎨</span>
+                    HOBBIES & INTERESTS
+                </h2>
+                <div class="hobbies-grid">
+                    <div class="hobby-item">Creative content creation</div>
+                    <div class="hobby-item">Exploring digital tools and trends</div>
+                    <div class="hobby-item">Community involvement</div>
+                    <div class="hobby-item">Reading and personal development</div>
+                    <div class="hobby-item">Music and social activities</div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">📌</span>
+                    REFERENCES
+                </h2>
+                <div class="reference-item">
+                    <div class="reference-name">Mr. Kofi Baah Sekyere</div>
+                    <div class="reference-contact">Mobile: 020798119</div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

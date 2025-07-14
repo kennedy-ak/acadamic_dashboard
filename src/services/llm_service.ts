@@ -1,4 +1,4 @@
-import { ChatGroq } from "@langchain/groq";
+import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { settings } from "../core/settings";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
@@ -47,10 +47,10 @@ export interface Award {
   year: string;
 }
 
-const llm = new ChatGroq({
-  model: settings.groq_model,
-  apiKey: settings.GROQ_API_KEY,
-  temperature: 0.1,
+const llm = new ChatOpenAI({
+  model: settings.openai_model,
+  apiKey: settings.OPENAI_API_KEY,
+  temperature: settings.temperature,
   maxTokens: settings.max_tokens,
 });
 
